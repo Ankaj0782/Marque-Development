@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forms in HTML</title>
+    <style>
+        input{
+            outline: none;
+            border: none;
+            border-bottom: 2px dotted;
+            
+        }
+        
+        
+
+    </style>
+</head>
+<body>
+    <h2 style="text-align: center;">Sports Physical  Form</h2>
+    <form action="actionpage1.html" method="get">
+
+        <fieldset>
+            
+            <legend>
+                Athlete Information
+            </legend>
+        <ul>
+            <li>
+                <label for="name">Name:</label>
+                <input type="text" id="name" placeholder="Enter your name" required>
+            </li>
+           
+            <li>
+                <label for="school_team">School/Team:</label>
+                <input type="text" id="school_team" name="school_team" placeholder="Enter your school name" required>
+                
+            </li>
+            
+            <li>
+                <label for="sports">Sports:</label>
+                <input type="text" id="sports" name="sports" placeholder="Sports" required>
+            </li>
+            
+            <li>
+                <label for="parent_guardian">Parent/Guardian Name:</label>
+                <input type="text" id="parent_guardian" name="parent_guardian" placeholder="Parent or Guardian" required>
+            </li>
+            
+            <li>
+                <label for="contact_number">Contact Number:</label>
+                <input type="text" id="contact_number" name="contact_number" placeholder="Example +91**********" required>
+            </li>
+        </ul>
+        </fieldset>
+        <fieldset>
+            <legend>Medical History For Athlete</legend>
+            <ul>
+                <li>
+                    <p>History Of Concussion:</p>
+                    <input type="radio" name="concussion" id="Yes" value="concussion-yes">
+<label for="Yes">Yes</label>
+
+<input type="radio" name="concussion" id="No" value="concussion-no">
+<label for="No">No</label>
+                
+                </li>
+                <li>
+                    <label for="previous_surgries">Previous surgeries:</label>
+                    <input type="text" name="previous_surgries" id="previous_surgries" required>
+                </li>
+                <li>
+                    <p>Any bone fractures ?</p>
+                    <input type="radio" name="fractures" id="Yes1" value="fractures-yes" required>
+                    <label for="fractures">Yes</label>
+                    <input type="radio" name="fractures" id="No1" value="fractures-no" required>
+                    <label for="fractures">No</label>
+                </li>
+                <li>
+                    <p>Asthma or breathing problems:</p>
+                    <input type="radio" name="breathing_problems" id="Yes2" value="breathing_problems-yes" required>
+                    <label for="breathing_problems">Yes</label>
+                    <input type="radio" name="breathing_problems" id="No2" value="breathing_problems-no" required>
+                    <label for="breathing_problems">No</label>
+                </li>
+
+            </ul>
+
+        </fieldset>
+        <fieldset>
+            <legend>Date/Time</legend>
+            <input type="date" id="DOB" name="DOB">
+            <label for="date"> DOB</label>
+            <br>
+            <input type="time" name="Time" id="Time">
+            <label for="Time">Time</label>
+        </fieldset>
+        <fieldset>
+            <legend>TEXTAREA</legend>
+            <label for="textarea"></label>
+            <textarea  name="textarea" id="textarea" rows="5" cols="160" placeholder="Write your summary"></textarea>
+            
+            
+        </fieldset>
+        <fieldset>
+            <legend>File Input</legend>
+            <label for="fileinput">Drop your last Medical Report:</label>
+            <input type="file" name="" id="fileinput" accept=".pdf,.html" required>
+        </fieldset>
+        <fieldset>
+            <legend>Checkbox/Select/Number</legend>
+            <ul>
+                <li>
+                    <input type="checkbox" name="terms-conditions" id="checkbok" required value="yes-terms-conditions">
+                    <label for="checkbok"> you've read those Terms and conditions</label>
+                </li>
+            </ul>
+        </fieldset>
+
+        
+    <fieldset>
+        <legend>Select</legend>
+        <label for="states"> Select Your state:</label>
+        <select name="states" id="states">
+            <option value="maharashtra">Maharashtra</option>
+            <option value="punjab">Punjab</option>
+            <option value="bihar">Bihar</option>
+            <option value="gujrat">Gujrat</option>
+        </select>
+    </fieldset>
+   
+    </form>
+     <button type="submit">Submit</button>
+<button type="reset">Reset</button>
+
+    
+</body>
+</html>
