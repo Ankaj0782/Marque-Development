@@ -1,0 +1,43 @@
+#container{
+    display:grid;
+    grid-template-columns:2fr 2fr1fr;
+    grid-template-rows:250px 180px 220px;
+    gap:20px;
+    grid-template-areas:
+
+"custom schedule schedule"
+
+"custom wallet inbox"
+
+"gifts gifts reminder";
+}
+.custom{
+    grid-area:custom;
+    background:#d7c8ff;
+}
+.schedule{
+    grid-area:schedule;
+    background:#df7b8f;
+}
+.wallet{
+    grid-area:wallet;
+    background-color: aquamarine;
+}
+.inbox{
+    grid-area:inbox;
+    background-color: rgb(255, 255, 71);
+}
+
+.gifts{
+    grid-area:gifts;
+    background-color: orange;
+}
+
+.reminder{
+    grid-area:reminder;
+    background-color: cornflowerblue;
+}
+.card{
+    border-radius:20px;
+    padding:20px;
+}
