@@ -13,7 +13,7 @@
 }
 .custom{
     grid-area:custom;
-    background:#d7c8ff;
+    background-color:var(#d7c8ff);
 }
 .schedule{
     grid-area:schedule;
