@@ -1,0 +1,29 @@
+body{
+    display:grid;
+
+    grid-template-columns:260px 1fr;
+
+    grid-template-rows:
+    70px
+    1fr
+    60px;
+
+    min-height:100vh;
+}
+.cards{
+    display:grid;
+    grid-template-columns:
+    repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
+}
+
+.analytics{
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:20px;
+    margin-top:20px;
+}
+
+.table-section{
+    margin-top:20px;
+}

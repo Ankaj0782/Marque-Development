@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Traffic Signal Animation</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0a0a0a; font-family: 'Courier New', monospace; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+
+  h1 { color: #fff; font-size: 20px; letter-spacing: 4px; text-align: center; margin-bottom: 6px; }
+  .subtitle { color: #555; font-size: 10px; letter-spacing: 5px; text-align: center; margin-bottom: 16px; }
+
+  .scene {
+    background: #111;
+    width: 100%;
+    max-width: 700px;
+    height: 520px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 14px;
+    border: 1px solid #222;
+  }
+
+  /* Roads */
+  .road-v { position: absolute; left: 50%; transform: translateX(-50%); width: 120px; height: 100%; background: #1a1a1a; }
+  .road-h { position: absolute; top: 50%; transform: translateY(-50%); width: 100%; height: 120px; background: #1a1a1a; }
+  .road-v::before { content:''; position:absolute; left:50%; transform:translateX(-50%); width:4px; height:100%; background:repeating-linear-gradient(to bottom,#f5c518 0,#f5c518 20px,transparent 20px,transparent 40px); }
+  .road-h::before { content:''; position:absolute; top:50%; transform:translateY(-50%); height:4px; width:100%; background:repeating-linear-gradient(to right,#f5c518 0,#f5c518 20px,transparent 20px,transparent 40px); }
+  .intersection { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:120px; height:120px; background:#1a1a1a; z-index:2; }
+
+  /* Crosswalks */
+  .cw { position:absolute; z-index:3; }
+  .cw-n { top:calc(50% - 100px); left:50%; transform:translateX(-50%); width:100px; height:18px; background:repeating-linear-gradient(to right,#ccc 0,#ccc 8px,transparent 8px,transparent 14px); }
+  .cw-s { bottom:calc(50% - 100px); left:50%; transform:translateX(-50%); width:100px; height:18px; background:repeating-linear-gradient(to right,#ccc 0,#ccc 8px,transparent 8px,transparent 14px); }
+  .cw-w { left:calc(50% - 100px); top:50%; transform:translateY(-50%); width:18px; height:100px; background:repeating-linear-gradient(to bottom,#ccc 0,#ccc 8px,transparent 8px,transparent 14px); }
+  .cw-e { right:calc(50% - 100px); top:50%; transform:translateY(-50%); width:18px; height:100px; background:repeating-linear-gradient(to bottom,#ccc 0,#ccc 8px,transparent 8px,transparent 14px); }
+
+  /* Corner greenery */
+  .corner { position:absolute; width:130px; height:130px; z-index:1; background:#1c3a1c; }
+  .corner-tl { top:0; left:0; border-bottom-right-radius:60px; }
+  .corner-tr { top:0; right:0; border-bottom-left-radius:60px; }
+  .corner-bl { bottom:0; left:0; border-top-right-radius:60px; }
+  .corner-br { bottom:0; right:0; border-top-left-radius:60px; }
+
+  /* Traffic Lights */
+  .tl { position:absolute; z-index:10; display:flex; flex-direction:column; align-items:center; gap:2px; }
+  .tl-body { background:#111; border:2px solid #333; border-radius:8px; padding:6px; display:flex; flex-direction:column; gap:5px; }
+  .tl-pole { width:6px; height:28px; background:#444; border-radius:3px; }
+  .bulb { width:22px; height:22px; border-radius:50%; border:1.5px solid #000; transition:box-shadow 0.3s, background 0.3s; }
+  .bulb.red    { background:#3a0000; }
+  .bulb.yellow { background:#2a2000; }
+  .bulb.green  { background:#002a00; }
+  .bulb.red.on    { background:#ff2222; box-shadow:0 0 12px 5px rgba(255,30,30,0.8); }
+  .bulb.yellow.on { background:#ffcc00; box-shadow:0 0 12px 5px rgba(255,200,0,0.7); }
+  .bulb.green.on  { background:#22ff44; box-shadow:0 0 12px 5px rgba(30,255,60,0.7); }
+
+  /* Light positions */
+  .tl-nw { top:calc(50% - 150px); left:calc(50% - 115px); }
+  .tl-ne { top:calc(50% - 150px); right:calc(50% - 115px); }
+  .tl-sw { bottom:calc(50% - 120px); left:calc(50% - 115px); flex-direction:column-reverse; }
+  .tl-se { bottom:calc(50% - 120px); right:calc(50% - 115px); flex-direction:column-reverse; }
+
+  /* Cars */
+  .car { position:absolute; z-index:8; width:36px; height:54px; }
+  .car-body { position:absolute; inset:0; border-radius:6px 6px 4px 4px; }
+  .car-roof  { position:absolute; top:6px; left:5px; right:5px; height:20px; border-radius:4px; background:rgba(0,0,0,0.3); }
+  .car-window { position:absolute; top:8px; left:7px; right:7px; height:13px; background:rgba(120,200,255,0.4); border-radius:2px; }
+  .headlight  { position:absolute; bottom:3px; width:8px; height:5px; background:#fff8aa; border-radius:2px; box-shadow:0 0 6px 2px rgba(255,248,170,0.8); }
+  .headlight-l { left:3px; }
+  .headlight-r { right:3px; }
+
+  /* Info panels */
+  .panel { position:absolute; z-index:20; background:rgba(10,10,10,0.9); border:1px solid #1e4a1e; border-radius:10px; padding:10px 14px; color:#7fff7f; font-family:'Courier New',monospace; }
+  .panel-tl { top:12px; left:12px; font-size:11px; line-height:1.8; }
+  .panel-tr { top:12px; right:12px; text-align:center; min-width:110px; }
+  .cyc-label { font-size:9px; color:#4a8a4a; letter-spacing:1px; }
+  .cyc-time  { font-size:28px; font-weight:700; color:#fff; letter-spacing:2px; margin:2px 0; }
+  .mini-lights { display:flex; gap:6px; justify-content:center; margin-top:4px; }
+  .mini-bulb { width:14px; height:14px; border-radius:50%; }
+  .mini-bulb.red    { background:#3a0000; }
+  .mini-bulb.yellow { background:#2a2000; }
+  .mini-bulb.green  { background:#002a00; }
+  .mini-bulb.red.on    { background:#ff2222; }
+  .mini-bulb.yellow.on { background:#ffcc00; }
+  .mini-bulb.green.on  { background:#22ff44; }
+
+  /* Controls */
+  .controls { display:flex; gap:10px; align-items:center; justify-content:center; margin-top:14px; }
+  .controls label { color:#888; font-size:13px; font-family:'Courier New',monospace; }
+  .btn { background:transparent; border:1px solid #333; color:#aaa; font-size:13px; font-family:'Courier New',monospace; padding:6px 16px; border-radius:6px; cursor:pointer; }
+  .btn:hover { background:#1a1a1a; color:#fff; border-color:#555; }
+  .btn.active { border-color:#22ff44; color:#22ff44; }
+</style>
+</head>
+<body>
+
+<h1>TRAFFIC SIGNAL ANIMATION</h1>
+<p class="subtitle">HTML &amp; CSS PROJECT</p>
+
+<div class="scene" id="scene">
+  <div class="road-v"></div>
+  <div class="road-h"></div>
+  <div class="intersection"></div>
+  <div class="cw cw-n"></div>
+  <div class="cw cw-s"></div>
+  <div class="cw cw-w"></div>
+  <div class="cw cw-e"></div>
+  <div class="corner corner-tl"></div>
+  <div class="corner corner-tr"></div>
+  <div class="corner corner-bl"></div>
+  <div class="corner corner-br"></div>
+
+  <!-- Traffic Lights -->
+  <div class="tl tl-nw">
+    <div class="tl-body">
+      <div class="bulb red"    id="r1"></div>
+      <div class="bulb yellow" id="y1"></div>
+      <div class="bulb green"  id="g1"></div>
+    </div>
+    <div class="tl-pole"></div>
+  </div>
+  <div class="tl tl-ne">
+    <div class="tl-body">
+      <div class="bulb red"    id="r2"></div>
+      <div class="bulb yellow" id="y2"></div>
+      <div class="bulb green"  id="g2"></div>
+    </div>
+    <div class="tl-pole"></div>
+  </div>
+  <div class="tl tl-sw">
+    <div class="tl-pole"></div>
+    <div class="tl-body">
+      <div class="bulb red"    id="r3"></div>
+      <div class="bulb yellow" id="y3"></div>
+      <div class="bulb green"  id="g3"></div>
+    </div>
+  </div>
+  <div class="tl tl-se">
+    <div class="tl-pole"></div>
+    <div class="tl-body">
+      <div class="bulb red"    id="r4"></div>
+      <div class="bulb yellow" id="y4"></div>
+      <div class="bulb green"  id="g4"></div>
+    </div>
+  </div>
+
+  <!-- Info Panels -->
+  <div class="panel panel-tl">
+    <span style="color:#4aaa4a;font-size:9px;letter-spacing:1px">HOW IT WORKS</span><br>
+    <span style="color:#ff4444">●</span> Red &nbsp;&nbsp;– Stop<br>
+    <span style="color:#ffcc00">●</span> Yellow – Wait<br>
+    <span style="color:#44ff44">●</span> Green – Go
+  </div>
+  <div class="panel panel-tr">
+    <div class="cyc-label">CYCLE TIME</div>
+    <div class="cyc-time" id="cyc-display">00:30</div>
+    <div class="mini-lights">
+      <div class="mini-bulb red"    id="mr"></div>
+      <div class="mini-bulb yellow" id="my"></div>
+      <div class="mini-bulb green"  id="mg"></div>
+    </div>
+  </div>
+
+  <!-- Cars container -->
+  <div id="cars"></div>
+</div>
+
+<div class="controls">
+  <label>Speed:</label>
+  <button class="btn" id="btn05" onclick="setSpeed(0.5)">0.5×</button>
+  <button class="btn active" id="btn1"  onclick="setSpeed(1)">1×</button>
+  <button class="btn" id="btn2"  onclick="setSpeed(2)">2×</button>
+</div>
+
+<script>
+// ── Signal timing ──────────────────────────────────────────────
+const RED = 30, YELLOW = 5, GREEN = 30, CYCLE = RED + YELLOW + GREEN;
+let elapsed = 0, speed = 1, lastT = null;
+
+function getPhase(t) {
+  const c = t % CYCLE;
+  if (c < RED)              return { ns:'red',    ew:'green'  };
+  if (c < RED + YELLOW)     return { ns:'red',    ew:'yellow' };
+  if (c < RED+YELLOW+GREEN) return { ns:'green',  ew:'red'    };
+  return                           { ns:'yellow', ew:'red'    };
+}
+
+function setLight(id, color) {
+  ['r','y','g'].forEach(c => document.getElementById(c+id).classList.remove('on'));
+  document.getElementById(color[0]+id).classList.add('on');
+}
+function setMini(r,y,g) {
+  document.getElementById('mr').classList.toggle('on', r);
+  document.getElementById('my').classList.toggle('on', y);
+  document.getElementById('mg').classList.toggle('on', g);
+}
+function fmtTime(s) {
+  const m = Math.floor(s/60), sec = Math.floor(s%60);
+  return String(m).padStart(2,'0') + ':' + String(sec).padStart(2,'0');
+}
+
+// ── Cars ───────────────────────────────────────────────────────
+const CAR_COLORS = ['#cc3333','#33aa33','#e8a010','#2255cc'];
+const CAR_DIRS   = ['s','n','e','w'];
+const SPEED_PX   = 65; // px per second at 1×
+const STOP_GAP   = 76; // px from center to stop line
+const cars = [];
+
+function buildCar(color, dir) {
+  const el = document.createElement('div');
+  el.className = 'car';
+  el.innerHTML = `
+    <div class="car-body" style="background:${color}">
+      <div class="car-roof"></div>
+      <div class="car-window"></div>
+    </div>
+    <div class="headlight headlight-l"></div>
+    <div class="headlight headlight-r"></div>`;
+  document.getElementById('cars').appendChild(el);
+  return el;
+}
+
+function initCars() {
+  const sc = document.getElementById('scene');
+  const W = sc.offsetWidth, H = sc.offsetHeight;
+  const cx = W/2, cy = H/2;
+  const starts = [
+    { x: cx - 22, y: -65 },   // south-bound: start above
+    { x: cx + 4,  y: H + 10 },// north-bound: start below
+    { x: -55,     y: cy - 22 },// east-bound: start left
+    { x: W + 10,  y: cy + 4 }, // west-bound: start right
+  ];
+  CAR_DIRS.forEach((dir, i) => {
+    const el = buildCar(CAR_COLORS[i], dir);
+    cars.push({ el, dir, x: starts[i].x, y: starts[i].y });
+    renderCar(cars[cars.length-1]);
+  });
+}
+
+function renderCar(car) {
+  car.el.style.left = Math.round(car.x) + 'px';
+  car.el.style.top  = Math.round(car.y) + 'px';
+  const rot = { s:0, n:180, e:90, w:-90 }[car.dir];
+  car.el.style.transform = `rotate(${rot}deg)`;
+}
+
+function stepCars(dt) {
+  const sc = document.getElementById('scene');
+  const W = sc.offsetWidth, H = sc.offsetHeight;
+  const cx = W/2, cy = H/2;
+  const ph = getPhase(elapsed);
+  const spd = SPEED_PX * dt;
+
+  cars.forEach(car => {
+    const nsGo = ph.ns === 'green';
+    const ewGo = ph.ew === 'green';
+    let blocked = false;
+
+    if (car.dir === 's' && !nsGo && car.y + 54 > cy - STOP_GAP && car.y < cy) blocked = true;
+    if (car.dir === 'n' && !nsGo && car.y < cy + STOP_GAP && car.y + 54 > cy) blocked = true;
+    if (car.dir === 'e' && !ewGo && car.x + 36 > cx - STOP_GAP && car.x < cx) blocked = true;
+    if (car.dir === 'w' && !ewGo && car.x < cx + STOP_GAP && car.x + 36 > cx) blocked = true;
+
+    if (!blocked) {
+      if (car.dir === 's') car.y += spd;
+      if (car.dir === 'n') car.y -= spd;
+      if (car.dir === 'e') car.x += spd;
+      if (car.dir === 'w') car.x -= spd;
+    }
+
+    // Wrap
+    if (car.dir === 's' && car.y > H + 65)  car.y = -65;
+    if (car.dir === 'n' && car.y < -65)      car.y = H + 10;
+    if (car.dir === 'e' && car.x > W + 50)  car.x = -55;
+    if (car.dir === 'w' && car.x < -55)     car.x = W + 10;
+
+    renderCar(car);
+  });
+}
+
+// ── Main loop ──────────────────────────────────────────────────
+function tick(ts) {
+  if (lastT === null) lastT = ts;
+  const dt = Math.min((ts - lastT) / 1000, 0.1) * speed;
+  lastT = ts;
+  elapsed += dt;
+
+  const ph = getPhase(elapsed);
+  [1,2].forEach(id => setLight(id, ph.ns));
+  [3,4].forEach(id => setLight(id, ph.ew));
+  setMini(ph.ns==='red', ph.ns==='yellow', ph.ns==='green');
+
+  const remaining = CYCLE - (elapsed % CYCLE);
+  document.getElementById('cyc-display').textContent = fmtTime(remaining);
+
+  stepCars(dt / speed);
+  requestAnimationFrame(tick);
+}
+
+// ── Controls ───────────────────────────────────────────────────
+function setSpeed(s) {
+  speed = s;
+  ['btn05','btn1','btn2'].forEach(id => document.getElementById(id).classList.remove('active'));
+  const map = { 0.5:'btn05', 1:'btn1', 2:'btn2' };
+  document.getElementById(map[s]).classList.add('active');
+}
+
+window.addEventListener('load', () => {
+  initCars();
+  requestAnimationFrame(tick);
+});
+</script>
+</body>
+</html>

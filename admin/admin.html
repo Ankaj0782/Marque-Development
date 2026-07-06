@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <aside>
+
+        <div class="logo">
+            <h2>AdminLTE</h2>
+        </div>
+
+        <ul class="menu">
+            <li>Dashboard</li>
+            <li>Widgets</li>
+            <li>Forms</li>
+            <li>Tables</li>
+            <li>Charts</li>
+            <li>Settings</li>
+        </ul>
+
+    </aside>
+
+    <!-- NAVBAR -->
+    <nav>
+
+        <div class="nav-left">
+            <button class="menu-btn">☰</button>
+            <h3>Dashboard</h3>
+        </div>
+
+        <div class="nav-right">
+            <span>🔍</span>
+            <span>🔔</span>
+            <span>👤 Admin</span>
+        </div>
+
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main>
+
+        <!-- PAGE TITLE -->
+        <section class="page-header">
+            <h1>Dashboard</h1>
+            <p>Home / Dashboard</p>
+        </section>
+
+        <!-- STAT CARDS -->
+        <section class="cards">
+
+            <div class="card blue">
+                <h2>150</h2>
+                <p>New Orders</p>
+                <a href="#">More Info</a>
+            </div>
+
+            <div class="card green">
+                <h2>53%</h2>
+                <p>Bounce Rate</p>
+                <a href="#">More Info</a>
+            </div>
+
+            <div class="card yellow">
+                <h2>44</h2>
+                <p>User Registrations</p>
+                <a href="#">More Info</a>
+            </div>
+
+            <div class="card red">
+                <h2>65</h2>
+                <p>Unique Visitors</p>
+                <a href="#">More Info</a>
+            </div>
+
+        </section>
+
+        <!-- ANALYTICS SECTION -->
+        <section class="analytics">
+
+            <!-- CHART -->
+            <div class="chart-box">
+
+                <div class="box-header">
+                    <h2>Sales Value</h2>
+                </div>
+
+                <div class="box-body">
+
+                    <!-- Chart.js Canvas -->
+                    <canvas id="salesChart"></canvas>
+
+                </div>
+
+            </div>
+
+            <!-- MAP / SECOND CHART -->
+            <div class="map-box">
+
+                <div class="box-header">
+                    <h2>Visitors Map</h2>
+                </div>
+
+                <div class="box-body">
+
+                    <img
+                        src="https://via.placeholder.com/500x300"
+                        alt="Map"
+                    >
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- TABLE SECTION -->
+        <section class="table-section">
+
+            <div class="table-card">
+
+                <div class="box-header">
+                    <h2>Latest Orders</h2>
+                </div>
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Customer</th>
+                            <th>Status</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+                            <td>1001</td>
+                            <td>John</td>
+                            <td>Completed</td>
+                            <td>$250</td>
+                        </tr>
+
+                        <tr>
+                            <td>1002</td>
+                            <td>Alex</td>
+                            <td>Pending</td>
+                            <td>$180</td>
+                        </tr>
+
+                        <tr>
+                            <td>1003</td>
+                            <td>David</td>
+                            <td>Completed</td>
+                            <td>$320</td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+
+        <p>
+            Copyright © 2025 Dashboard.
+            All Rights Reserved.
+        </p>
+
+    </footer>
+
+</body>
+</html>
